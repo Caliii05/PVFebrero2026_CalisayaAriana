@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -8,31 +8,45 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (login(correo, password)) {
+    const success = login(correo, password);
+    if (success) {
       navigate('/dashboard');
     } else {
-      alert("Credenciales incorrectas");
+      alert("Credenciales incorrectas o usuario no registrado");
     }
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Hotel Continental</h1>
-      <form onSubmit={handleLogin} style={{ display: 'inline-block', textAlign: 'left', border: '1px solid #ccc', padding: '20px', borderRadius: '8px' }}>
-        <h3>Iniciar Sesión</h3>
-        <div>
-          <label>Correo:</label><br/>
-          <input type="email" value={correo} onChange={(e) => setCorreo(e.target.value)} required />
-        </div><br/>
-        <div>
-          <label>Password:</label><br/>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </div><br/>
-        <button type="submit" style={{ width: '100%' }}>Ingresar</button>
-        <p>¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link></p>
-      </form>
+    <div style={{ padding: '50px', textAlign: 'center', fontFamily: 'Arial' }}>
+      <div style={{ border: '1px solid #ddd', padding: '30px', display: 'inline-block', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
+        <h2 style={{ color: '#1a73e8' }}>Hotel Calisaya - Login</h2>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '250px' }}>
+          <input 
+            type="email" 
+            placeholder="Correo electrónico" 
+            value={correo} 
+            onChange={(e) => setCorreo(e.target.value)} 
+            required 
+            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+          />
+          <input 
+            type="password" 
+            placeholder="Contraseña" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            required 
+            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+          />
+          <button type="submit" style={{ padding: '10px', background: '#1a73e8', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+            Iniciar Sesión
+          </button>
+        </form>
+        <p style={{ marginTop: '20px' }}>
+          ¿No tienes cuenta? <Link to="/registro" style={{ color: '#1a73e8' }}>Regístrate aquí</Link>
+        </p>
+      </div>
     </div>
   );
 };

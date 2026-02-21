@@ -1,70 +1,83 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 
 const Registro = () => {
-  const { register } = useAuth();
-  const navigate = useNavigate();
-  
   const [formData, setFormData] = useState({
-    dni: '',
-    apellido: '',
     nombre: '',
-    fechaNacimiento: '',
-    tipo: 'Pasajero', 
-    nacionalidad: 'Argentina', 
+    dni: '',
     correo: '',
     password: ''
   });
+  
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (register(formData)) {
-      alert("Usuario registrado con éxito. Ya puedes iniciar sesión.");
+    // Intentamos registrar al usuario
+    const success = register(formData);
+    
+    if (success) {
+      alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
       navigate('/login');
     } else {
-      alert("Error: El DNI o Correo ya están registrados.");
+      alert("El DNI o Correo ya están registrados.");
     }
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '500px', margin: 'auto' }}>
-      <h2>Registro de Nuevo Usuario</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <input name="dni" placeholder="DNI (Clave Primaria)" required onChange={handleChange} />
-        <input name="apellido" placeholder="Apellido" required onChange={handleChange} />
-        <input name="nombre" placeholder="Nombre" required onChange={handleChange} />
-        
-        <label>Fecha de Nacimiento:</label>
-        <input name="fechaNacimiento" type="date" required onChange={handleChange} />
-        
-        <label>Nacionalidad:</label>
-        <select name="nacionalidad" onChange={handleChange}>
-          <option value="Argentina">Argentina</option>
-          <option value="Bolivia">Bolivia</option>
-          <option value="Brasil">Brasil</option>
-          <option value="Chile">Chile</option>
-          <option value="Uruguay">Uruguay</option>
-        </select>
-
-        <label>Tipo de Usuario:</label>
-        <select name="tipo" onChange={handleChange}>
-          <option value="Pasajero">Pasajero</option>
-          <option value="Administrador">Administrador</option>
-        </select>
-
-        <input name="correo" type="email" placeholder="Correo Electrónico" required onChange={handleChange} />
-        <input name="password" type="password" placeholder="Contraseña" required onChange={handleChange} />
-        
-        <button type="submit" style={{ padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', cursor: 'pointer' }}>
-          Registrar Usuario
-        </button>
-      </form>
-      <p>¿Ya tienes cuenta? <Link to="/login">Inicia sesión aquí</Link></p>
+    <div style={{ padding: '50px', textAlign: 'center', fontFamily: 'Arial' }}>
+      <div style={{ border: '1px solid #ddd', padding: '30px', display: 'inline-block', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
+        <h2 style={{ color: '#28a745' }}>Crear Nueva Cuenta</h2>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '300px' }}>
+          <input 
+            name="nombre"
+            type="text" 
+            placeholder="Nombre Completo" 
+            onChange={handleChange} 
+            required 
+            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+          />
+          <input 
+            name="dni"
+            type="text" 
+            placeholder="DNI" 
+            onChange={handleChange} 
+            required 
+            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+          />
+          <input 
+            name="correo"
+            type="email" 
+            placeholder="Correo electrónico" 
+            onChange={handleChange} 
+            required 
+            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+          />
+          <input 
+            name="password"
+            type="password" 
+            placeholder="Contraseña" 
+            onChange={handleChange} 
+            required 
+            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+          />
+          <button type="submit" style={{ padding: '10px', background: '#28a745', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+            Registrarse
+          </button>
+        </form>
+        <p style={{ marginTop: '20px' }}>
+          ¿Ya tienes cuenta? <Link to="/login" style={{ color: '#28a745' }}>Inicia sesión aquí</Link>
+        </p>
+      </div>
     </div>
   );
 };

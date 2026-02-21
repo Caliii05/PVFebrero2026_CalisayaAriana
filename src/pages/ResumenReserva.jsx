@@ -59,3 +59,4 @@ const ResumenReserva = () => {
     </div>
   );
 };
+export default ResumenReserva;
