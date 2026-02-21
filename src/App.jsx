@@ -1,4 +1,5 @@
 import React from 'react';
+import ResumenReserva from './pages/ResumenReserva';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { HotelProvider } from './context/HotelContext';
@@ -18,6 +19,7 @@ function App() {
       <HotelProvider>
         <Router>
           <Routes>
+            <Route path="/resumen/:codigo" element={<ProtectedRoute><ResumenReserva /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
