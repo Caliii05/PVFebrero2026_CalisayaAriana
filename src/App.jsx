@@ -1,33 +1,53 @@
 import React from 'react';
-import ResumenReserva from './pages/ResumenReserva';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { HotelProvider } from './context/HotelContext';
 
+// Importación de Páginas
 import Login from './pages/Login';
 import Registro from './pages/Registro';
 import Dashboard from './pages/Dashboard';
+import ResumenReserva from './pages/ResumenReserva';
+import DetalleReserva from './pages/DetalleReserva';
 
+// Componente para proteger rutas
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useAuth();
-  return currentUser ? children : <Navigate to="/login" />;
+  // Si no hay usuario, mandamos al login. Si hay, mostramos el contenido.
+  return currentUser ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
   return (
-    <AuthProvider>
-      <HotelProvider>
-        <Router>
+    <Router>
+      <AuthProvider>
+        <HotelProvider>
           <Routes>
-            <Route path="/resumen/:codigo" element={<ProtectedRoute><ResumenReserva /></ProtectedRoute>} />
+            {/* 1. RUTAS PÚBLICAS */}
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="*" element={<Navigate to="/login" />} />
+
+            {/* 2. RUTAS PROTEGIDAS */}
+            <Route 
+              path="/dashboard" 
+              element={<ProtectedRoute><Dashboard /></ProtectedRoute>} 
+            />
+            <Route 
+              path="/resumen/:codigo" 
+              element={<ProtectedRoute><ResumenReserva /></ProtectedRoute>} 
+            />
+            <Route 
+              path="/detalle-reserva/:codigoHabitacion" 
+              element={<ProtectedRoute><DetalleReserva /></ProtectedRoute>} 
+            />
+
+            {/* 3. REDIRECCIONES Y MANEJO DE ERRORES */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
-        </Router>
-      </HotelProvider>
-    </AuthProvider>
+        </HotelProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 
