@@ -15,12 +15,17 @@ export const HotelProvider = ({ children }) => {
   const [habitaciones, setHabitaciones] = useLocalStorage('hotel_rooms', initialRooms);
   const [reservas, setReservas] = useLocalStorage('hotel_reservas', []);
 
-  const crearReserva = (habitacion, dniPasajero, dias) => {
+  // AGREGAMOS nombre, apellido y nacionalidad como parámetros
+  const crearReserva = (habitacion, dniPasajero, dias, nombre, apellido, nacionalidad) => {
     const nuevaReserva = {
-      codigo: uuidv4(),
+      codigo: uuidv4(), // Este es el ID de la reserva
       fechaReserva: new Date().toLocaleDateString(),
       cantidadDias: parseInt(dias),
-      dniPasajero,
+      dniPasajero: dniPasajero,
+      // GUARDAMOS LOS DATOS FALTANTES AQUÍ:
+      nombrePasajero: nombre,
+      apellidoPasajero: apellido,
+      nacionalidadPasajero: nacionalidad,
       codigoHabitacion: habitacion.codigo,
       costoTotal: habitacion.costo * dias
     };
@@ -34,22 +39,16 @@ export const HotelProvider = ({ children }) => {
     return nuevaReserva;
   };
 
-  // NUEVA FUNCIÓN PARA LIBERAR HABITACIONES
   const resetearReservas = () => {
-    setHabitaciones(initialRooms); // Volvemos al estado inicial (todas disponibles)
-    setReservas([]); // Borramos la lista de reservas
-    // Como usamos useLocalStorage, esto se actualiza automáticamente en el navegador
+    setHabitaciones(initialRooms);
+    setReservas([]);
   };
 
   return (
-    // Agregamos resetearReservas al value
     <HotelContext.Provider value={{ habitaciones, reservas, crearReserva, resetearReservas }}>
       {children}
     </HotelContext.Provider>
   );
 };
 
-export const useHotel = () => {
-  const context = useContext(HotelContext);
-  return context;
-};
+export const useHotel = () => useContext(HotelContext);

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useHotel } from '../context/HotelContext';
 import { useAuth } from '../context/AuthContext';
-import jsPDF from 'jspdf'; // Importación vital
+import jsPDF from 'jspdf';
 
 const ResumenReserva = () => {
   const { codigo } = useParams();
@@ -15,11 +15,9 @@ const ResumenReserva = () => {
 
   if (!habitacion) return <div style={{ padding: '20px' }}>Cargando datos...</div>;
 
-  // --- FUNCIÓN QUE GENERA EL PDF ---
-  const generarPDF = (datosReserva) => {
+  const generarPDF = () => {
     const doc = new jsPDF();
 
-    // Estilos básicos
     doc.setFontSize(20);
     doc.setTextColor(40, 167, 69);
     doc.text("COMPROBANTE DE RESERVA", 105, 20, { align: "center" });
@@ -27,16 +25,15 @@ const ResumenReserva = () => {
     doc.setDrawColor(200, 200, 200);
     doc.line(20, 25, 190, 25);
 
-    // Datos del Pasajero
     doc.setFontSize(14);
     doc.setTextColor(0, 0, 0);
     doc.text("INFORMACIÓN DEL PASAJERO", 20, 40);
     doc.setFontSize(11);
+    // Usamos currentUser directamente para el PDF
     doc.text(`Nombre Completo: ${currentUser.nombre} ${currentUser.apellido}`, 20, 50);
     doc.text(`DNI: ${currentUser.dni}`, 20, 60);
     doc.text(`Nacionalidad: ${currentUser.nacionalidad}`, 20, 70);
 
-    // Datos de la Habitación
     doc.setFontSize(14);
     doc.text("DETALLES DE LA HABITACIÓN", 20, 90);
     doc.setFontSize(11);
@@ -44,7 +41,6 @@ const ResumenReserva = () => {
     doc.text(`Tipo: ${habitacion.tipo}`, 20, 110);
     doc.text(`Servicios: ${habitacion.servicios}`, 20, 120);
 
-    // Datos del Costo
     doc.setFontSize(14);
     doc.text("RESUMEN DE PAGO", 20, 140);
     doc.setFontSize(11);
@@ -55,18 +51,23 @@ const ResumenReserva = () => {
     doc.setTextColor(40, 167, 69);
     doc.text(`TOTAL A PAGAR: $${habitacion.costo * dias}`, 20, 180);
 
-    // Descarga el archivo
     doc.save(`Reserva_${currentUser.dni}_${habitacion.codigo}.pdf`);
   };
 
   const handleConfirmar = () => {
-    // 1. Guardamos en el Contexto
-    crearReserva(habitacion, currentUser.dni, dias);
+
+    crearReserva(
+      habitacion, 
+      currentUser.dni, 
+      dias, 
+      currentUser.nombre, 
+      currentUser.apellido, 
+      currentUser.nacionalidad
+    );
     
-    // 2. Ejecutamos la función del PDF
     generarPDF();
     
-    alert("¡Reserva exitosa! Tu comprobante se ha descargado automáticamente.");
+    alert("¡Reserva exitosa! Tu comprobante se ha descargado.");
     navigate('/dashboard');
   };
 
@@ -74,13 +75,14 @@ const ResumenReserva = () => {
     <div style={{ padding: '30px', fontFamily: 'Arial', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
       <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'white', padding: '30px', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
         <h2 style={{ textAlign: 'center', color: '#2c3e50' }}>Confirmar Reserva</h2>
-        
         <hr />
         
         <div style={{ margin: '20px 0' }}>
           <h4>Datos del Pasajero:</h4>
-          <p><strong>Pasajero:</strong> {currentUser.apellido}, {currentUser.nombre}</p>
+          {/* Mostramos nombre y apellido correctamente */}
+          <p><strong>Pasajero:</strong> {currentUser.nombre} {currentUser.apellido}</p>
           <p><strong>DNI:</strong> {currentUser.dni}</p>
+          <p><strong>Nacionalidad:</strong> {currentUser.nacionalidad}</p>
         </div>
 
         <div style={{ margin: '20px 0', padding: '15px', border: '1px solid #eee', borderRadius: '8px' }}>

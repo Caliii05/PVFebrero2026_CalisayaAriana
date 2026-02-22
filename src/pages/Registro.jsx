@@ -30,14 +30,15 @@ const Registro = () => {
       alert("El DNI o Correo ya están registrados.");
     }
   };
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  const valorLimpio = name === 'dni' ? value.replace(/\D/g, '') : value;
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
+  setFormData({
+    ...formData,
+    [name]: valorLimpio
+  });
+};
   return (
     <div style={{ padding: '30px', textAlign: 'center', fontFamily: 'Arial' }}>
       <div style={{ border: '1px solid #ddd', padding: '30px', display: 'inline-block', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', backgroundColor: '#fff' }}>
@@ -52,7 +53,8 @@ const Registro = () => {
               style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '100%' }} />
           </div>
 
-          <input name="dni" type="text" placeholder="DNI (Clave Primaria)" onChange={handleChange} required 
+          <input name="dni" type="text" placeholder="DNI (8 dígitos)"
+           onChange={handleChange} required maxLength="8" pattern="\d{8}" title="El DNI debe tener exactamente 8 números"  
             style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
 
           <div style={{ textAlign: 'left' }}>

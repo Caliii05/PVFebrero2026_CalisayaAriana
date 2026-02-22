@@ -1,0 +1,111 @@
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useHotel } from '../context/HotelContext';
+import { useAuth } from '../context/AuthContext';
+
+const DetalleHabitacion = () => {
+  const { codigo } = useParams(); // Usamos el código de la habitación de la URL
+  const [dias, setDias] = useState(1);
+  
+  // Cambiamos 'realizarReserva' por 'crearReserva' para que coincida con tu HotelContext
+  const { habitaciones, crearReserva } = useHotel();
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+
+  // Buscamos por código, ya que en tu HotelContext usas 'codigo'
+  const habitacion = habitaciones.find(h => h.codigo === codigo);
+
+  const handleReserva = () => {
+    if (!currentUser) {
+      alert("Debes iniciar sesión para reservar");
+      return navigate('/login');
+    }
+
+    if (!habitacion) {
+      alert("Error: Habitación no encontrada");
+      return;
+    }
+
+    // Llamamos a crearReserva pasando los parámetros en el orden correcto
+    // (habitacion, dniPasajero, dias, nombre, apellido, nacionalidad)
+    const reservaExitosa = crearReserva(
+      habitacion,
+      currentUser.dni,
+      dias,
+      currentUser.nombre,
+      currentUser.apellido,
+      currentUser.nacionalidad
+    );
+
+    if (reservaExitosa) {
+      alert("¡Reserva confirmada con éxito!");
+      // Navegamos al resumen usando el código de habitación
+      navigate(`/resumen/${habitacion.codigo}`);
+    }
+  };
+
+  if (!habitacion) return <div style={{padding: '20px'}}>Cargando habitación...</div>;
+
+  return (
+    <div style={{ padding: '30px', fontFamily: 'Arial', textAlign: 'center' }}>
+      <div style={{ 
+        border: '1px solid #ddd', 
+        padding: '30px', 
+        borderRadius: '15px', 
+        maxWidth: '400px', 
+        margin: '0 auto',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)' 
+      }}>
+        <h2 style={{ color: '#007bff' }}>Confirmar Reserva</h2>
+        <hr />
+        <h3>Habitación {habitacion.codigo}</h3>
+        <p><strong>Tipo:</strong> {habitacion.tipo}</p>
+        <p><strong>Precio por noche:</strong> ${habitacion.costo}</p>
+        
+        <div style={{ margin: '20px 0', textAlign: 'left' }}>
+          <label style={{ display: 'block', marginBottom: '5px' }}>Días de estancia:</label>
+          <input 
+            type="number" 
+            value={dias} 
+            onChange={(e) => setDias(Math.max(1, parseInt(e.target.value) || 1))} 
+            min="1"
+            style={{ width: '100%', padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+          />
+        </div>
+
+        <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
+          <p style={{ margin: 0, fontSize: '18px' }}>Total a pagar:</p>
+          <p style={{ margin: 0, fontSize: '24px', fontWeight: 'bold', color: '#28a745' }}>
+            ${habitacion.costo * dias}
+          </p>
+        </div>
+
+        <button 
+          onClick={handleReserva}
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            background: '#28a745', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '5px', 
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold'
+          }}
+        >
+          Confirmar Reserva
+        </button>
+        
+        <button 
+          onClick={() => navigate('/dashboard')}
+          style={{ marginTop: '10px', background: 'none', border: 'none', color: '#666', cursor: 'pointer' }}
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default DetalleHabitacion;
