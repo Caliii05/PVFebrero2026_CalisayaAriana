@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useHotel } from '../context/HotelContext';
 import { useAuth } from '../context/AuthContext';
+import jsPDF from 'jspdf'; // Importación vital
 
 const ResumenReserva = () => {
   const { codigo } = useParams();
@@ -14,73 +15,102 @@ const ResumenReserva = () => {
 
   if (!habitacion) return <div style={{ padding: '20px' }}>Cargando datos...</div>;
 
-  // Lógica de PDF preparada pero no funcional (para el próximo avance)
-  const generarPDF = () => {
-    console.log("Generación de PDF en desarrollo para el cierre del proyecto...");
-    alert("Funcionalidad de exportación a PDF en desarrollo.");
+  // --- FUNCIÓN QUE GENERA EL PDF ---
+  const generarPDF = (datosReserva) => {
+    const doc = new jsPDF();
+
+    // Estilos básicos
+    doc.setFontSize(20);
+    doc.setTextColor(40, 167, 69);
+    doc.text("COMPROBANTE DE RESERVA", 105, 20, { align: "center" });
+    
+    doc.setDrawColor(200, 200, 200);
+    doc.line(20, 25, 190, 25);
+
+    // Datos del Pasajero
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text("INFORMACIÓN DEL PASAJERO", 20, 40);
+    doc.setFontSize(11);
+    doc.text(`Nombre Completo: ${currentUser.nombre} ${currentUser.apellido}`, 20, 50);
+    doc.text(`DNI: ${currentUser.dni}`, 20, 60);
+    doc.text(`Nacionalidad: ${currentUser.nacionalidad}`, 20, 70);
+
+    // Datos de la Habitación
+    doc.setFontSize(14);
+    doc.text("DETALLES DE LA HABITACIÓN", 20, 90);
+    doc.setFontSize(11);
+    doc.text(`Código: ${habitacion.codigo}`, 20, 100);
+    doc.text(`Tipo: ${habitacion.tipo}`, 20, 110);
+    doc.text(`Servicios: ${habitacion.servicios}`, 20, 120);
+
+    // Datos del Costo
+    doc.setFontSize(14);
+    doc.text("RESUMEN DE PAGO", 20, 140);
+    doc.setFontSize(11);
+    doc.text(`Días de estancia: ${dias}`, 20, 150);
+    doc.text(`Precio por noche: $${habitacion.costo}`, 20, 160);
+    
+    doc.setFontSize(16);
+    doc.setTextColor(40, 167, 69);
+    doc.text(`TOTAL A PAGAR: $${habitacion.costo * dias}`, 20, 180);
+
+    // Descarga el archivo
+    doc.save(`Reserva_${currentUser.dni}_${habitacion.codigo}.pdf`);
   };
 
   const handleConfirmar = () => {
-    // Registramos la reserva en el contexto
+    // 1. Guardamos en el Contexto
     crearReserva(habitacion, currentUser.dni, dias);
-    alert(`Reserva registrada en el sistema para ${currentUser.nombre} ${currentUser.apellido}.`);
+    
+    // 2. Ejecutamos la función del PDF
+    generarPDF();
+    
+    alert("¡Reserva exitosa! Tu comprobante se ha descargado automáticamente.");
     navigate('/dashboard');
   };
 
   return (
-    <div style={{ padding: '30px', fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif', backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
-      <h2 style={{ textAlign: 'center', color: '#1a1a1a' }}>Finalizar Proceso de Reserva</h2>
-      
-      <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: '#fff', padding: '25px', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}>
+    <div style={{ padding: '30px', fontFamily: 'Arial', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+      <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'white', padding: '30px', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
+        <h2 style={{ textAlign: 'center', color: '#2c3e50' }}>Confirmar Reserva</h2>
         
-        {/* SECCIÓN 1: DATOS DEL PASAJERO (Pedido por consigna) */}
-        <div style={{ marginBottom: '25px', padding: '15px', borderLeft: '5px solid #007bff', backgroundColor: '#f8f9fa' }}>
-          <h3 style={{ marginTop: 0, color: '#007bff' }}>Información del Pasajero</h3>
+        <hr />
+        
+        <div style={{ margin: '20px 0' }}>
+          <h4>Datos del Pasajero:</h4>
+          <p><strong>Pasajero:</strong> {currentUser.apellido}, {currentUser.nombre}</p>
           <p><strong>DNI:</strong> {currentUser.dni}</p>
-          <p><strong>Apellido:</strong> {currentUser.apellido}</p>
-          <p><strong>Nombre:</strong> {currentUser.nombre}</p>
-          <p><strong>Nacionalidad:</strong> {currentUser.nacionalidad}</p>
         </div>
 
-        {/* SECCIÓN 2: DATOS DE LA HABITACIÓN (Pedido por consigna) */}
-        <div style={{ marginBottom: '25px', padding: '15px', borderLeft: '5px solid #6c757d', backgroundColor: '#f8f9fa' }}>
-          <h3 style={{ marginTop: 0, color: '#495057' }}>Detalles de Habitación</h3>
-          <p><strong>Código:</strong> {habitacion.codigo}</p>
-          <p><strong>Tipo:</strong> {habitacion.tipo}</p>
+        <div style={{ margin: '20px 0', padding: '15px', border: '1px solid #eee', borderRadius: '8px' }}>
+          <h4>Detalle de Habitación:</h4>
+          <p><strong>Tipo:</strong> {habitacion.tipo} ({habitacion.codigo})</p>
           <p><strong>Servicios:</strong> {habitacion.servicios}</p>
-          <p><strong>Costo por noche:</strong> ${habitacion.costo}</p>
         </div>
 
-        {/* SECCIÓN 3: DATOS DE LA RESERVA Y COSTO TOTAL */}
-        <div style={{ marginBottom: '25px', padding: '20px', backgroundColor: '#e9ecef', borderRadius: '8px' }}>
-          <h3 style={{ marginTop: 0 }}>Cálculo de Estancia</h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
-            <span>Cantidad de Días:</span>
-            <input 
-              type="number" min="1" value={dias} 
-              onChange={(e) => setDias(Math.max(1, parseInt(e.target.value) || 1))}
-              style={{ padding: '8px', width: '70px', borderRadius: '4px', border: '1px solid #ced4da' }}
-            />
-          </div>
-          <div style={{ fontSize: '22px', fontWeight: 'bold' }}>
-            COSTO TOTAL: <span style={{ color: '#28a745' }}>${habitacion.costo * dias}</span>
-          </div>
+        <div style={{ margin: '20px 0', backgroundColor: '#e9ecef', padding: '15px', borderRadius: '8px' }}>
+          <label><strong>¿Cuántas noches? </strong></label>
+          <input 
+            type="number" 
+            min="1" 
+            value={dias} 
+            onChange={(e) => setDias(Math.max(1, parseInt(e.target.value) || 1))}
+            style={{ padding: '5px', width: '60px', marginLeft: '10px' }}
+          />
+          <h3 style={{ marginTop: '15px', color: '#28a745' }}>Total: ${habitacion.costo * dias}</h3>
         </div>
 
-        {/* ACCIONES */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <button onClick={handleConfirmar} style={{ padding: '15px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '16px', fontWeight: '600' }}>
-            Confirmar Reserva
-          </button>
-          
-          <button onClick={generarPDF} style={{ padding: '12px', backgroundColor: '#17a2b8', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
-            Descargar Comprobante (Próximamente)
-          </button>
-
-          <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', textDecoration: 'underline' }}>
-            Cancelar y volver
-          </button>
-        </div>
+        <button 
+          onClick={handleConfirmar} 
+          style={{ width: '100%', padding: '15px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}
+        >
+          Confirmar y Descargar Comprobante (PDF)
+        </button>
+        
+        <button onClick={() => navigate('/dashboard')} style={{ width: '100%', marginTop: '10px', background: 'none', border: 'none', color: '#666', cursor: 'pointer' }}>
+          Volver atrás
+        </button>
       </div>
     </div>
   );

@@ -27,7 +27,6 @@ export const HotelProvider = ({ children }) => {
 
     setReservas([...(reservas || []), nuevaReserva]);
     
-    // Marcar como no disponible
     setHabitaciones(habitaciones.map(h => 
       h.codigo === habitacion.codigo ? { ...h, estado: 'Ocupada' } : h
     ));
@@ -35,8 +34,16 @@ export const HotelProvider = ({ children }) => {
     return nuevaReserva;
   };
 
+  // NUEVA FUNCIÓN PARA LIBERAR HABITACIONES
+  const resetearReservas = () => {
+    setHabitaciones(initialRooms); // Volvemos al estado inicial (todas disponibles)
+    setReservas([]); // Borramos la lista de reservas
+    // Como usamos useLocalStorage, esto se actualiza automáticamente en el navegador
+  };
+
   return (
-    <HotelContext.Provider value={{ habitaciones, reservas, crearReserva }}>
+    // Agregamos resetearReservas al value
+    <HotelContext.Provider value={{ habitaciones, reservas, crearReserva, resetearReservas }}>
       {children}
     </HotelContext.Provider>
   );
