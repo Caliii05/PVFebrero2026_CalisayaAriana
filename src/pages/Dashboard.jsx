@@ -8,12 +8,49 @@ const Dashboard = () => {
   const { habitaciones, resetearReservas } = useHotel(); 
   const navigate = useNavigate();
 
+ const descripciones = {
+  Simple: (
+    <>
+      <strong>Ideal para viajeros solitarios o de negocios.</strong><br />
+      Incluye escritorio, WiFi de alta velocidad.
+      <br /><br />
+      <strong>Cantidad de Habitaciones:</strong> 1 Habitación
+    </>
+  ),
+
+  Doble: (
+    <>
+      <strong>Perfecta para parejas.</strong><br />
+      Espaciosa con cama King Size, minibar y vista espectacular al jardín.
+      <br /><br />
+      <strong>Cantidad de Habitaciones:</strong> 1 Habitación
+    </>
+  ),
+
+  Triple: (
+    <>
+      <strong>Excelente para grupos o familias.</strong><br />
+      Equipada con tres camas individuales, Smart TV y zona de descanso.
+      <br /><br />
+      <strong>Cantidad de Habitaciones:</strong> 3 Habitaciones
+    </>
+  ),
+
+  Premium: (
+    <>
+      <strong>La máxima experiencia de lujo.</strong><br />
+      Incluye Jacuzzi privado, cafetera premium, balcón y atención VIP.
+      <br /><br />
+      <strong>Cantidad de Habitaciones:</strong> 2 Habitaciones
+    </>
+  )
+};
+
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  // Verificamos el rol del usuario logueado
   const isAdmin = currentUser?.tipo === 'Administrador';
 
   return (
@@ -42,7 +79,6 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* SECCIÓN EXCLUSIVA PARA ADMIN: RESETEO DEL SISTEMA */}
       {isAdmin && (
         <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#fff3cd', border: '1px solid #ffeeba', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
           <h3 style={{ margin: '0 0 10px 0', color: '#856404' }}>Acciones de Administrador</h3>
@@ -55,7 +91,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* GRILLA DE HABITACIONES */}
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
@@ -71,7 +106,8 @@ const Dashboard = () => {
               padding: '20px', 
               backgroundColor: '#fff',
               boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-              transition: 'transform 0.2s'
+              display: 'flex',
+              flexDirection: 'column' 
             }}
           >
             <h3 style={{ marginTop: 0, color: '#34495e' }}>Habitación {hab.codigo}</h3>
@@ -90,11 +126,22 @@ const Dashboard = () => {
               </span>
             </p>
             
+            {/* --- NUEVA SECCIÓN DE DESCRIPCIÓN --- */}
+            <p style={{ 
+              fontSize: '14px', 
+              color: '#666', 
+              fontStyle: 'italic',
+              margin: '15px 0',
+              flexGrow: 1, 
+              borderTop: '1px solid #eee',
+              paddingTop: '10px'
+            }}>
+              {descripciones[hab.tipo] || 'Sin descripción disponible.'}
+            </p>
+
             <hr style={{ border: '0', borderTop: '1px solid #eee', margin: '15px 0' }} />
 
-            {/* LÓGICA DE BOTONES SEGÚN EL ROL Y ESTADO */}
             {!isAdmin ? (
-              // VISTA DEL PASAJERO
               hab.estado === 'Disponible' ? (
                 <button 
                   onClick={() => navigate(`/resumen/${hab.codigo}`)}
@@ -108,21 +155,11 @@ const Dashboard = () => {
                 </button>
               )
             ) : (
-              // VISTA DEL ADMINISTRADOR
               <div>
                 {hab.estado === 'Ocupada' ? (
                   <button 
                     onClick={() => navigate(`/detalle-reserva/${hab.codigo}`)} 
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px', 
-                      backgroundColor: '#17a2b8', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '6px', 
-                      cursor: 'pointer',
-                      fontWeight: 'bold'
-                    }}
+                    style={{ width: '100%', padding: '12px', backgroundColor: '#17a2b8', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
                   >
                     Ver Información de Reserva
                   </button>
