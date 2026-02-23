@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import './Registro.css';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -8,11 +9,11 @@ const Registro = () => {
     apellido: '',
     nombre: '',
     fechaNacimiento: '',
-    tipo: 'Pasajero', // Valor por defecto
-    nacionalidad: 'Argentina', // Valor por defecto del enum
+    tipo: 'Pasajero', 
+    nacionalidad: 'Argentina', 
     correo: '',
     password: '',
-    estado: 'Activo' // Atributo estado pedido por la consigna
+    estado: 'Activo' 
   });
   
   const { register } = useAuth();
@@ -20,7 +21,6 @@ const Registro = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Intentamos registrar al usuario con el objeto completo
     const success = register(formData);
     
     if (success) {
@@ -30,47 +30,85 @@ const Registro = () => {
       alert("El DNI o Correo ya están registrados.");
     }
   };
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  const valorLimpio = name === 'dni' ? value.replace(/\D/g, '') : value;
 
-  setFormData({
-    ...formData,
-    [name]: valorLimpio
-  });
-};
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    let valorFiltrado = value;
+
+    // LÓGICA DE VALIDACIÓN SEGÚN EL CAMPO
+    if (name === 'dni') {
+      // Solo números
+      valorFiltrado = value.replace(/\D/g, '');
+    } else if (name === 'nombre' || name === 'apellido') {
+      // Solo letras (incluye tildes, eñes y espacios)
+      // El regex [^a-zA-ZáéíóúÁÉÍÓÚñÑ ] busca todo lo que NO sea letra o espacio y lo elimina
+      valorFiltrado = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, '');
+    }
+
+    setFormData({
+      ...formData,
+      [name]: valorFiltrado
+    });
+  };
+
   return (
-    <div style={{ padding: '30px', textAlign: 'center', fontFamily: 'Arial' }}>
-      <div style={{ border: '1px solid #ddd', padding: '30px', display: 'inline-block', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', backgroundColor: '#fff' }}>
-        <h2 style={{ color: '#28a745' }}>Crear Nueva Cuenta</h2>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '350px' }}>
+    <div className="registro-page">
+      <div className="registro-card">
+        <h2>Crear Nueva Cuenta</h2>
+        
+        <form onSubmit={handleSubmit} className="registro-form">
           
-          {/* Fila de Nombre y Apellido */}
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <input name="nombre" type="text" placeholder="Nombre" onChange={handleChange} required 
-              style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '100%' }} />
-            <input name="apellido" type="text" placeholder="Apellido" onChange={handleChange} required 
-              style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '100%' }} />
+          <div className="form-row">
+            <input 
+              name="nombre" 
+              type="text" 
+              className="registro-input"
+              placeholder="Nombre" 
+              value={formData.nombre} // Agregado para que el input sea controlado
+              onChange={handleChange} 
+              required 
+            />
+            <input 
+              name="apellido" 
+              type="text" 
+              className="registro-input"
+              placeholder="Apellido" 
+              value={formData.apellido} // Agregado para que el input sea controlado
+              onChange={handleChange} 
+              required 
+            />
           </div>
 
-          <input name="dni" type="text" placeholder="DNI (8 dígitos)"
-           onChange={handleChange} required maxLength="8" pattern="\d{8}" title="El DNI debe tener exactamente 8 números"  
-            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+          <input 
+            name="dni" 
+            type="text" 
+            className="registro-input"
+            placeholder="DNI (8 dígitos)"
+            value={formData.dni} // Agregado para que el input sea controlado
+            onChange={handleChange} 
+            required 
+            maxLength="8" 
+            pattern="\d{8}" 
+            title="El DNI debe tener exactamente 8 números"  
+          />
 
-          <div style={{ textAlign: 'left' }}>
-            <label style={{ fontSize: '12px', color: '#666', marginLeft: '5px' }}>Fecha de Nacimiento</label>
-            <input name="fechaNacimiento" type="date" onChange={handleChange} required 
-              style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc', width: '94%' }} />
+          <div className="input-group">
+            <label className="input-label">Fecha de Nacimiento</label>
+            <input 
+              name="fechaNacimiento" 
+              type="date" 
+              className="registro-input"
+              onChange={handleChange} 
+              required 
+            />
           </div>
 
-          <select name="tipo" onChange={handleChange} required 
-            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc', backgroundColor: 'white' }}>
+          <select name="tipo" className="registro-select" onChange={handleChange} required>
             <option value="Pasajero">Pasajero</option>
             <option value="Administrador">Administrador</option>
           </select>
 
-          <select name="nacionalidad" onChange={handleChange} required 
-            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc', backgroundColor: 'white' }}>
+          <select name="nacionalidad" className="registro-select" onChange={handleChange} required>
             <option value="Argentina">Argentina</option>
             <option value="Uruguay">Uruguay</option>
             <option value="Chile">Chile</option>
@@ -80,19 +118,31 @@ const handleChange = (e) => {
             <option value="Otro">Otro</option>
           </select>
 
-          <input name="correo" type="email" placeholder="Correo electrónico" onChange={handleChange} required 
-            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+          <input 
+            name="correo" 
+            type="email" 
+            className="registro-input"
+            placeholder="Correo electrónico" 
+            onChange={handleChange} 
+            required 
+          />
 
-          <input name="password" type="password" placeholder="Contraseña" onChange={handleChange} required 
-            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+          <input 
+            name="password" 
+            type="password" 
+            className="registro-input"
+            placeholder="Contraseña" 
+            onChange={handleChange} 
+            required 
+          />
 
-          <button type="submit" style={{ padding: '12px', background: '#28a745', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px', marginTop: '10px' }}>
+          <button type="submit" className="btn-register">
             Registrarse
           </button>
         </form>
 
-        <p style={{ marginTop: '20px' }}>
-          ¿Ya tienes cuenta? <Link to="/login" style={{ color: '#28a745' }}>Inicia sesión aquí</Link>
+        <p className="login-link-text">
+          ¿Ya tienes cuenta? <Link to="/login" className="login-link">Inicia sesión aquí</Link>
         </p>
       </div>
     </div>

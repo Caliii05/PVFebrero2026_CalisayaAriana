@@ -4,15 +4,13 @@ import { useHotel } from '../context/HotelContext';
 import { useAuth } from '../context/AuthContext';
 
 const DetalleHabitacion = () => {
-  const { codigo } = useParams(); // Usamos el código de la habitación de la URL
+  const { codigo } = useParams(); 
   const [dias, setDias] = useState(1);
   
-  // Cambiamos 'realizarReserva' por 'crearReserva' para que coincida con tu HotelContext
   const { habitaciones, crearReserva } = useHotel();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  // Buscamos por código, ya que en tu HotelContext usas 'codigo'
   const habitacion = habitaciones.find(h => h.codigo === codigo);
 
   const handleReserva = () => {
@@ -26,8 +24,7 @@ const DetalleHabitacion = () => {
       return;
     }
 
-    // Llamamos a crearReserva pasando los parámetros en el orden correcto
-    // (habitacion, dniPasajero, dias, nombre, apellido, nacionalidad)
+  
     const reservaExitosa = crearReserva(
       habitacion,
       currentUser.dni,
@@ -39,7 +36,6 @@ const DetalleHabitacion = () => {
 
     if (reservaExitosa) {
       alert("¡Reserva confirmada con éxito!");
-      // Navegamos al resumen usando el código de habitación
       navigate(`/resumen/${habitacion.codigo}`);
     }
   };

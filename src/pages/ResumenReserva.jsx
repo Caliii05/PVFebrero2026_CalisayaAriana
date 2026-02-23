@@ -13,11 +13,16 @@ const ResumenReserva = () => {
   const [dias, setDias] = useState(1);
   const habitacion = habitaciones.find(h => h.codigo === codigo);
 
-  if (!habitacion) return <div style={{ padding: '20px' }}>Cargando datos...</div>;
+  if (!habitacion) {
+    return (
+      <div style={{ padding: '50px', textAlign: 'center', fontFamily: 'Arial' }}>
+        <h3>Cargando datos de la habitación...</h3>
+      </div>
+    );
+  }
 
   const generarPDF = () => {
     const doc = new jsPDF();
-
     doc.setFontSize(20);
     doc.setTextColor(40, 167, 69);
     doc.text("COMPROBANTE DE RESERVA", 105, 20, { align: "center" });
@@ -29,7 +34,6 @@ const ResumenReserva = () => {
     doc.setTextColor(0, 0, 0);
     doc.text("INFORMACIÓN DEL PASAJERO", 20, 40);
     doc.setFontSize(11);
-    // Usamos currentUser directamente para el PDF
     doc.text(`Nombre Completo: ${currentUser.nombre} ${currentUser.apellido}`, 20, 50);
     doc.text(`DNI: ${currentUser.dni}`, 20, 60);
     doc.text(`Nacionalidad: ${currentUser.nacionalidad}`, 20, 70);
@@ -55,7 +59,6 @@ const ResumenReserva = () => {
   };
 
   const handleConfirmar = () => {
-
     crearReserva(
       habitacion, 
       currentUser.dni, 
@@ -66,52 +69,121 @@ const ResumenReserva = () => {
     );
     
     generarPDF();
-    
     alert("¡Reserva exitosa! Tu comprobante se ha descargado.");
     navigate('/dashboard');
   };
 
   return (
-    <div style={{ padding: '30px', fontFamily: 'Arial', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-      <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'white', padding: '30px', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
-        <h2 style={{ textAlign: 'center', color: '#2c3e50' }}>Confirmar Reserva</h2>
-        <hr />
+    <div style={{ 
+      padding: '30px', 
+      fontFamily: 'Arial, sans-serif', 
+      backgroundColor: '#f8f9fa', 
+      minHeight: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}>
+      <div style={{ 
+        maxWidth: '600px', 
+        width: '100%',
+        backgroundColor: 'white', 
+        padding: '40px', 
+        borderRadius: '15px', 
+        boxShadow: '0 10px 25px rgba(0,0,0,0.1)' 
+      }}>
+        <h2 style={{ textAlign: 'center', color: '#2c3e50', marginBottom: '10px' }}>Confirmar Reserva</h2>
+        <p style={{ textAlign: 'center', color: '#6c757d', marginBottom: '20px' }}>Revise los detalles antes de finalizar</p>
+        <hr style={{ border: '0', borderTop: '1px solid #eee', marginBottom: '20px' }} />
         
-        <div style={{ margin: '20px 0' }}>
-          <h4>Datos del Pasajero:</h4>
-          {/* Mostramos nombre y apellido correctamente */}
-          <p><strong>Pasajero:</strong> {currentUser.nombre} {currentUser.apellido}</p>
-          <p><strong>DNI:</strong> {currentUser.dni}</p>
-          <p><strong>Nacionalidad:</strong> {currentUser.nacionalidad}</p>
+        {/* SECCIÓN PASAJERO */}
+        <div style={{ marginBottom: '25px' }}>
+          <h4 style={{ color: '#495057', marginBottom: '10px', borderLeft: '4px solid #28a745', paddingLeft: '10px' }}>
+            Datos del Pasajero
+          </h4>
+          <div style={{ padding: '15px', backgroundColor: '#fdfdfd', border: '1px solid #f1f1f1', borderRadius: '8px' }}>
+            <p style={{ margin: '5px 0' }}><strong>Pasajero:</strong> {currentUser.nombre} {currentUser.apellido}</p>
+            <p style={{ margin: '5px 0' }}><strong>DNI:</strong> {currentUser.dni}</p>
+            <p style={{ margin: '5px 0' }}><strong>Nacionalidad:</strong> {currentUser.nacionalidad}</p>
+          </div>
         </div>
 
-        <div style={{ margin: '20px 0', padding: '15px', border: '1px solid #eee', borderRadius: '8px' }}>
-          <h4>Detalle de Habitación:</h4>
-          <p><strong>Tipo:</strong> {habitacion.tipo} ({habitacion.codigo})</p>
-          <p><strong>Servicios:</strong> {habitacion.servicios}</p>
+        {/* SECCIÓN HABITACIÓN */}
+        <div style={{ marginBottom: '25px' }}>
+          <h4 style={{ color: '#495057', marginBottom: '10px', borderLeft: '4px solid #17a2b8', paddingLeft: '10px' }}>
+            Detalle de Habitación
+          </h4>
+          <div style={{ padding: '15px', backgroundColor: '#fdfdfd', border: '1px solid #f1f1f1', borderRadius: '8px' }}>
+            <p style={{ margin: '5px 0' }}><strong>Tipo:</strong> {habitacion.tipo} ({habitacion.codigo})</p>
+            <p style={{ margin: '5px 0' }}><strong>Servicios:</strong> {habitacion.servicios}</p>
+          </div>
         </div>
 
-        <div style={{ margin: '20px 0', backgroundColor: '#e9ecef', padding: '15px', borderRadius: '8px' }}>
-          <label><strong>¿Cuántas noches? </strong></label>
+        {/* SECCIÓN PAGO */}
+        <div style={{ 
+          margin: '25px 0', 
+          backgroundColor: '#e9ecef', 
+          padding: '20px', 
+          borderRadius: '10px',
+          textAlign: 'center'
+        }}>
+          <label style={{ fontWeight: 'bold', fontSize: '16px' }}>¿Cuántas noches se hospedará? </label>
           <input 
             type="number" 
             min="1" 
             value={dias} 
             onChange={(e) => setDias(Math.max(1, parseInt(e.target.value) || 1))}
-            style={{ padding: '5px', width: '60px', marginLeft: '10px' }}
+            style={{ 
+              padding: '8px', 
+              width: '70px', 
+              marginLeft: '10px', 
+              borderRadius: '5px', 
+              border: '1px solid #ccc',
+              textAlign: 'center',
+              fontSize: '16px'
+            }}
           />
-          <h3 style={{ marginTop: '15px', color: '#28a745' }}>Total: ${habitacion.costo * dias}</h3>
+          <div style={{ marginTop: '20px' }}>
+            <span style={{ fontSize: '18px', color: '#495057' }}>Total a pagar:</span>
+            <h2 style={{ margin: '5px 0', color: '#28a745', fontSize: '32px' }}>${habitacion.costo * dias}</h2>
+          </div>
         </div>
 
+        {/* BOTONES */}
         <button 
           onClick={handleConfirmar} 
-          style={{ width: '100%', padding: '15px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}
+          style={{ 
+            width: '100%', 
+            padding: '16px', 
+            backgroundColor: '#28a745', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '8px', 
+            cursor: 'pointer', 
+            fontWeight: 'bold', 
+            fontSize: '16px',
+            boxShadow: '0 4px 6px rgba(40, 167, 69, 0.2)',
+            transition: 'background 0.3s'
+          }}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#218838'}
+          onMouseOut={(e) => e.target.style.backgroundColor = '#28a745'}
         >
           Confirmar y Descargar Comprobante (PDF)
         </button>
         
-        <button onClick={() => navigate('/dashboard')} style={{ width: '100%', marginTop: '10px', background: 'none', border: 'none', color: '#666', cursor: 'pointer' }}>
-          Volver atrás
+        <button 
+          onClick={() => navigate('/dashboard')} 
+          style={{ 
+            width: '100%', 
+            marginTop: '15px', 
+            background: 'none', 
+            border: 'none', 
+            color: '#6c757d', 
+            cursor: 'pointer',
+            textDecoration: 'underline',
+            fontSize: '14px'
+          }}
+        >
+          Cancelar y volver al panel
         </button>
       </div>
     </div>

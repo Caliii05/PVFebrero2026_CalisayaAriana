@@ -1,0 +1,124 @@
+/* Contenedor Principal */
+.login-page {
+  font-family: 'Arial', sans-serif;
+  overflow-x: hidden;
+}
+
+/* --- SECCIÓN 1: BIENVENIDA --- */
+.hero-section {
+  height: 100vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.hero-btn {
+  padding: 15px 40px;
+  font-size: 18px;
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.hero-btn:hover {
+  background-color: white;
+  color: #1a73e8;
+}
+
+/* --- SECCIÓN 2: FORMULARIO --- */
+.form-section {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  padding: 20px;
+}
+
+.login-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(220,220,120,0.9) 25%, rgba(195,193,78,0.9) 50%, rgba(160,158,60,0.9) 75%, rgba(255,255,255,0.6) 100%);
+  box-shadow: 0 4px 15px rgba(255,255,255,0.4), inset 0 0 20px rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.6); 
+  padding: 40px;
+  border-radius: 15px; 
+  width: 70%;
+  maxWidth: 350px;
+  textAlign: center;
+  backdrop-filter: blur(10px);
+}
+
+.login-title-main {
+  color: #000000; 
+  margin-bottom: 30px; 
+  font-style: italic;
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  border-bottom: 2px solid rgba(229, 235, 235, 0.96);
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  outline: none;
+}
+
+.login-input:focus {
+  border-color: #a09e3c;
+  box-shadow: 0 0 5px rgba(160,158,60,0.5);
+}
+
+.btn-submit {
+  padding: 12px; 
+  background: #000000; 
+  color: white; 
+  border: none; 
+  border-radius: 8px; 
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+
+.btn-submit:hover {
+  transform: scale(1.02);
+  background: #333333;
+}
+
+.register-link-text {
+  margin-top: 25px;
+  font-size: 14px;
+}
+
+.register-link {
+  color: #ecfaff; /* Color sugerido por tu diseño original */
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}

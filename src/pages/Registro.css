@@ -1,0 +1,105 @@
+/* Contenedor Principal */
+.registro-page {
+  padding: 30px;
+  text-align: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #f4f7f6;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tarjeta del Formulario */
+.registro-card {
+  border: 1px solid #ddd;
+  padding: 40px;
+  display: inline-block;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  background-color: #fff;
+  width: 100%;
+  max-width: 400px;
+}
+
+.registro-card h2 {
+  color: #28a745;
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 26px;
+}
+
+/* Formulario y Elementos */
+.registro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.registro-input, .registro-select {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  font-size: 14px;
+  box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.registro-input:focus, .registro-select:focus {
+  border-color: #28a745;
+}
+
+/* Etiquetas de ayuda */
+.input-group {
+  text-align: left;
+}
+
+.input-label {
+  font-size: 12px;
+  color: #666;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Botón de Registro */
+.btn-register {
+  padding: 14px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-register:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+/* Enlace inferior */
+.login-link-text {
+  margin-top: 25px;
+  font-size: 14px;
+}
+
+.login-link {
+  color: #28a745;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
